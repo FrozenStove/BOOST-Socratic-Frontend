@@ -1,0 +1,53 @@
+# prettier-ignore
+steps:
+  # 1. Build the Docker image
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      [
+        "build",
+        "-t",
+        "gcr.io/$PROJECT_ID/github.com/frozenstove/boost-socratic-frontend:latest",
+        ".",
+      ]
+
+  # 2. Push the Docker image
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      [
+        "push",
+        "gcr.io/$PROJECT_ID/github.com/frozenstove/boost-socratic-frontend:latest",
+      ]
+
+  # 3. Set up kubectl (get credentials for your cluster)
+  - name: "gcr.io/cloud-builders/gcloud"
+    args:
+      [
+        "container",
+        "clusters",
+        "get-credentials",
+        "deployment-1-cluster",
+        "--zone",
+        "us-central1",
+      ]
+
+  # 4. Deploy to GKE (substitute image tag)
+  - name: "gcr.io/cloud-builders/kubectl"
+    env:
+      - "CLOUDSDK_COMPUTE_ZONE=us-central1"
+      - "CLOUDSDK_CONTAINER_CLUSTER=deployment-1-cluster"
+    args:
+      [
+        "set",
+        "image",
+        "deployment/frontend",
+        "frontend=gcr.io/$PROJECT_ID/github.com/frozenstove/boost-socratic-frontend:latest",
+        "-n",
+        "default",
+      ]
+logsBucket: "gs://ucsf-medical-education-app-build-logs"
+
+# substitutions:
+#   _COMMIT_SHA: '${SHORT_SHA}'
+
+images:
+  - "gcr.io/$PROJECT_ID/github.com/frozenstove/boost-socratic-frontend:latest"
