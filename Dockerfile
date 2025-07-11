@@ -20,4 +20,4 @@ COPY docker-entrypoint.sh $START_SCRIPT
 RUN chmod 551 $START_SCRIPT
 
 EXPOSE 80
-CMD ["/bin/sh", "/usr/share/docker-entry.sh", "/usr/share/nginx/html/env-config.js"]
+CMD ["/bin/sh", "/usr/share/docker-entrypoint.sh", "/usr/share/nginx/html/env-config.js"]
