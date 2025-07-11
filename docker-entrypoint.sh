@@ -1,30 +1,14 @@
-#!/bin/bash
-set -e
+#!/bin/sh
 
-echo "=== Starting Medical Education Frontend ==="
-echo "Current directory: $(pwd)"
-echo "Backend URL: ${BACKEND_URL}"
-echo "Node ENV: ${NODE_ENV}"
-echo "React App ENV: ${REACT_APP_ENV}"
+CONFIG_FILE=$1
+# index.html includes config file, where app can reference these with window.env.VARNAME
+rm -f $CONFIG_FILE
+echo "Writing app environment variables to config file: $CONFIG_FILE"
+echo "window.env = {} " > $CONFIG_FILE
+printenv | grep "^REACT_APP_.*=.*" | sed "s/\(^REACT_APP_.*\)=\(.*$\)/window.env.\1=\"\2\"/g" >> $CONFIG_FILE
+chmod 555 $CONFIG_FILE
 
-# Check if nginx config template exists
-if [ ! -f /etc/nginx/nginx.conf.template ]; then
-    echo "ERROR: nginx.conf.template not found!"
-    ls -la /etc/nginx/
-    exit 1
-fi
+echo "starting nginx"
+nginx -g "daemon off;" &
 
-# Substitute environment variables in nginx config
-echo "Generating nginx configuration..."
-envsubst < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf
-
-echo "Nginx configuration generated successfully"
-
-# Test nginx configuration
-echo "Testing nginx configuration..."
-nginx -t
-
-echo "Starting nginx..."
-
-# Start nginx in foreground
-nginx -g "daemon off;" 
+wait $!
