@@ -32,13 +32,15 @@ spec:
           image: gcr.io/ucsf-medical-education-app/github.com/frozenstove/boost-socratic-frontend:latest
           imagePullPolicy: Always
           ports:
-            - containerPort: 3000
+            - containerPort: 80
           readinessProbe:
             httpGet:
               path: /health
-              port: 3000
-            initialDelaySeconds: 5
+              port: 80
+            initialDelaySeconds: 10
             periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
           env:
             - name: POD_NAME
               valueFrom:
@@ -47,4 +49,4 @@ spec:
             - name: NODE_ENV
               value: production
             - name: PORT
-              value: "3000"
+              value: "80"
