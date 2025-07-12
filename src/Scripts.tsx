@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './Scripts.css';
-import { SERVER_URL } from './constants';
+// import { SERVER_URL } from './constants';
 
 type ScriptName = 'ingest' | 'verify' | 'check';
 
@@ -31,15 +31,17 @@ function Scripts() {
 
     const handleButtonClick = async (button: string) => {
         setResult('');
-        console.log(`${SERVER_URL}/api/scripts/${button}`);
+        const url = `/api/scripts/${button}`;
+        console.log(`URL: ${url}`);
         setData(null);
         try {
-            const response = await fetch(`${SERVER_URL}/api/scripts/${button}`, {
+            const response = await fetch(url, {
                 method: 'GET',
                 headers: {
                     'auth': auth
                 }
             });
+            console.log(`Response: ${JSON.stringify(response)}`);
             const data: ScriptResult = await response.json();
             if (data.error) {
                 setResult('Error: ' + data.error);

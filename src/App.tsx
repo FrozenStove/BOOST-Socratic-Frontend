@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Sidebar from './Sidebar';
-import { SERVER_URL } from './constants';
+// import { SERVER_URL } from './constants';
 import './App.css';
 
 interface Message {
@@ -24,7 +24,7 @@ function App() {
         setLoading(true);
 
         try {
-            const response = await fetch(`${SERVER_URL}/api/chat`, {
+            const response = await fetch(`/api/chat`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
